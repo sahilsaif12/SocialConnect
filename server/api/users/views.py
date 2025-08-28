@@ -40,3 +40,25 @@ class RegisterView(generics.CreateAPIView):
         headers = self.get_success_headers(serializer.data)
 
         return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED,headers=headers,)
+
+
+
+from django.core.signing import BadSignature, SignatureExpired
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+User = get_user_model()
+
+class VerifyEmailView(APIView):
+    def post(self, request):
+        token = request.query_params.get("token")
+        try:
+            email_id = signer.unsign(token)  
+            print("user_id",email_id)
+            user = User.objects.get(email=email_id)
+            user.is_active = True
+            user.save()
+            return Response({"message": "Email verified successfully."}, status=status.HTTP_200_OK)
+        except (BadSignature, SignatureExpired, User.DoesNotExist):
+            return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
