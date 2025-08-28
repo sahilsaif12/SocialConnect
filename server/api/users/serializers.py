@@ -32,15 +32,18 @@ class RegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
          validators=[
             RegexValidator(
-                regex=r'^[a-zA-Z0-9_]{3,30}$',
-                message="Username must be 3-30 characters, alphanumeric with underscores only."
+                regex=r'^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*_)[a-zA-Z0-9_]{3,30}$',
+                message="Username must be 3-30 characters, contain at least one letter, one number, and one underscore. Only alphanumeric characters and underscores are allowed."
+            ),
+
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message="This username is already taken. Please choose another one."
             )
         ],
         error_messages={
             'required': 'Username is required',
-            'invalid': 'Username can only contain letters, numbers and @/./+/-/_ characters',
             'max_length': 'Username cannot exceed 30 characters',
-            'unique': 'This username is already taken',
             'blank': 'username cannot be empty',
         }
     )

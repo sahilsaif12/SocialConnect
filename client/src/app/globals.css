@@ -3,6 +3,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -111,6 +112,14 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+
+.radial-gradient-bg {
+      background-image: 
+        radial-gradient(circle at center, #fffba9 0%, transparent 70%);
+      opacity: 0.6;
+      mix-blend-mode: "multiply";
+}
+
 
 @layer base {
   * {

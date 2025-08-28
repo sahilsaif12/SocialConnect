@@ -1,3 +1,5 @@
+import { showErrorToasts } from "./utils";
+
 export async function apiRequest<T>(
   url: string,
   options?: RequestInit
@@ -15,7 +17,11 @@ export async function apiRequest<T>(
   console.log("res",res)
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.detail || "Something went wrong");
+    if (errorData) {
+      showErrorToasts(errorData,true,false);
+    }
+    console.log("errorData",errorData);
+    throw new Error(errorData || "Something went wrong");
   }
 
   return res.json();
