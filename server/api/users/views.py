@@ -46,7 +46,6 @@ class RegisterView(generics.CreateAPIView):
 from django.core.signing import BadSignature, SignatureExpired
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 
 User = get_user_model()
 
@@ -62,3 +61,15 @@ class VerifyEmailView(APIView):
             return Response({"message": "Email verified successfully."}, status=status.HTTP_200_OK)
         except (BadSignature, SignatureExpired, User.DoesNotExist):
             return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+from .serializers import LoginSerializer
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data, status=200)

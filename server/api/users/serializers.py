@@ -80,3 +80,58 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.is_active = False 
         user.save()
         return user
+
+
+
+# apps/authentication/serializers.py
+from django.contrib.auth import authenticate
+from django.utils import timezone
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+class LoginSerializer(serializers.Serializer):
+    identifier = serializers.CharField(write_only=True)  # can be username or email
+    password = serializers.CharField(write_only=True, style={"input_type": "password"})
+    
+    access = serializers.CharField(read_only=True)
+    refresh = serializers.CharField(read_only=True)
+    user = serializers.SerializerMethodField()
+
+    def get_user(self, obj):
+        user = obj["user"]
+        return {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "is_active": user.is_active,
+        }
+
+    def validate(self, attrs):
+        identifier = attrs.get("identifier")
+        password = attrs.get("password")
+
+        try:
+            user = User.objects.get(email__iexact=identifier)
+        except User.DoesNotExist:
+            try:
+                user = User.objects.get(username__iexact=identifier)
+            except User.DoesNotExist:
+                raise serializers.ValidationError("Invalid credentials")
+
+        if not user.check_password(password):
+            raise serializers.ValidationError("Invalid credentials")
+
+        if not user.is_active:
+            raise serializers.ValidationError("Please verify your email to activate your account. we have already sent you a verification email before")
+
+        user.last_login_at= timezone.now()
+        user.save(update_fields=["last_login_at"])
+
+        refresh = RefreshToken.for_user(user)
+        access = str(refresh.access_token)
+
+        return {
+            "refresh": str(refresh),
+            "access": access,
+            "user":self.get_user({"user": user}),
+        }
