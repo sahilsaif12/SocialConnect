@@ -1,0 +1,158 @@
+"use client";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { OctagonAlertIcon } from "lucide-react";
+import Link from "next/link";
+import Cookies from 'js-cookie';
+
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { LoginInput, loginSchema } from "@/schemas/authSchema";
+import { apiRequest } from "@/lib/api";
+import LogoBannerCard from "../components/logo-banner-card";
+
+
+
+export const SignInView = () => {
+    const router = useRouter()
+    const [isloading, setisloading] = useState<boolean>(false)
+    const [success, setSuccess] = useState(false);
+
+    const form = useForm<LoginInput>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            identifier: "",
+            password: "",
+        }
+    });
+
+    const onSubmit = async (data: LoginInput) => {
+
+        setisloading(true);
+        try {
+            const res: {
+                access: string;
+                refresh: string;
+                data: {}
+            } = await apiRequest("/login/", {
+                method: "POST",
+                body: JSON.stringify(data),
+            });
+            console.log("login res", res);
+
+            Cookies.set('access_token', res.access, {
+                secure: true,
+                sameSite: 'strict'
+            });
+
+            Cookies.set('refresh_token', res.refresh, {
+                secure: true,
+                sameSite: 'strict'
+            });
+            router.push("/")
+        } catch (err: any) { }
+
+        setisloading(false);
+    };
+
+
+
+    return (
+        <div className="flex flex-col gap-6">
+
+            <Card className="overflow-hidden shadow-lg p-0">
+                <CardContent className="grid p-0 md:grid-cols-2   ">
+
+
+                    <Form {...form} >
+
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
+                            <div className="flex flex-col gap-6">
+                                <div className="flex flex-col items-center text-center">
+                                    <h1 className="text-2xl font-bold">Let's get started</h1>
+                                    <p className="text-muted-foreground text-balance">Create your account</p>
+                                </div>
+                                <div className="grid gap-3">
+
+                                    <FormField
+                                        control={form.control}
+                                        name='identifier'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>User ID</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="email or username"
+                                                        type="text"
+                                                        {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name='password'
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Password</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="alex_32"
+                                                        type="password"
+                                                        {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                </div>
+
+
+                                <Button className="w-full cursor-pointer " type="submit"
+                                    disabled={isloading}
+                                >
+                                    Sign In
+                                    {isloading && (
+                                        <svg className="text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24">
+                                            <path
+                                                d="M32 3C35.8083 3 39.5794 3.75011 43.0978 5.20749C46.6163 6.66488 49.8132 8.80101 52.5061 11.4939C55.199 14.1868 57.3351 17.3837 58.7925 20.9022C60.2499 24.4206 61 28.1917 61 32C61 35.8083 60.2499 39.5794 58.7925 43.0978C57.3351 46.6163 55.199 49.8132 52.5061 52.5061C49.8132 55.199 46.6163 57.3351 43.0978 58.7925C39.5794 60.2499 35.8083 61 32 61C28.1917 61 24.4206 60.2499 20.9022 58.7925C17.3837 57.3351 14.1868 55.199 11.4939 52.5061C8.801 49.8132 6.66487 46.6163 5.20749 43.0978C3.7501 39.5794 3 35.8083 3 32C3 28.1917 3.75011 24.4206 5.2075 20.9022C6.66489 17.3837 8.80101 14.1868 11.4939 11.4939C14.1868 8.80099 17.3838 6.66487 20.9022 5.20749C24.4206 3.7501 28.1917 3 32 3L32 3Z"
+                                                stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"></path>
+                                            <path
+                                                d="M32 3C36.5778 3 41.0906 4.08374 45.1692 6.16256C49.2477 8.24138 52.7762 11.2562 55.466 14.9605C58.1558 18.6647 59.9304 22.9531 60.6448 27.4748C61.3591 31.9965 60.9928 36.6232 59.5759 40.9762"
+                                                stroke="currentColor" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                                            </path>
+                                        </svg>
+                                    )}
+                                </Button>
+
+                                <div className="text-center text-sm">
+                                    Don't have an account?{" "}
+                                    <Link href="/sign-up" className="underline underline-offset-4 ">
+                                        Sign Up
+                                    </Link>
+                                </div>
+                            </div>
+                        </form>
+                    </Form>
+
+                    <LogoBannerCard height={60} />
+                </CardContent>
+            </Card>
+
+            <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4 ">
+
+                By continuing, you agree to our <a href="#" >Terms of services</a> and <a href="#" >Privacy Policy</a>.
+            </div>
+        </div>
+    );
+}

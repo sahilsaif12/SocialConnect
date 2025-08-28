@@ -5,9 +5,9 @@ export default function page() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full space-y-5 max-w-md rounded-2xl bg-white p-5  shadow-2xl  ">
-        <div className="rounded-xl overflow-hidden">
+        <div className="rounded-xl overflow-hidden  bg-red-400">
 
-        <LogoBannerCard/>
+        <LogoBannerCard height={30} />
         </div>
         <VerifyEmailView />
       </div>

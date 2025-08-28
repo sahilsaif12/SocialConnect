@@ -2,7 +2,7 @@
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { OctagonAlertIcon, X } from "lucide-react";
+import { OctagonAlertIcon } from "lucide-react";
 import Link from "next/link";
 
 
@@ -11,23 +11,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { registerSchema } from "@/schemas/authSchema";
+import { RegisterInput, registerSchema } from "@/schemas/authSchema";
 import { apiRequest } from "@/lib/api";
 import LogoBannerCard from "../components/logo-banner-card";
-import { showErrorToasts } from "@/lib/utils";
-import { toast } from "sonner";
-
-
 
 export const SignUpView = () => {
-    const router = useRouter()
-    const [error, setError] = useState<string | null>(null)
     const [isloading, setisloading] = useState<boolean>(false)
     const [success, setSuccess] = useState(false);
 
-    const form = useForm<z.infer<typeof registerSchema>>({
+    const form = useForm<RegisterInput>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
             email: "",
@@ -38,8 +31,8 @@ export const SignUpView = () => {
         }
     });
 
-    const onSubmit = async (data: z.infer<typeof registerSchema>) => {
-        
+    const onSubmit = async (data: RegisterInput) => {
+
         setisloading(true);
         try {
             await apiRequest("/register/", {
@@ -47,12 +40,7 @@ export const SignUpView = () => {
                 body: JSON.stringify(data),
             });
             setSuccess(true);
-        } catch (err: any) {
-            console.log("err 0",err);
-            
-            // showErrorToasts(err, true, false);
-
-        }
+        } catch (err: any) { }
 
         setisloading(false);
     };
@@ -81,8 +69,8 @@ export const SignUpView = () => {
                             <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
                                 <div className="flex flex-col gap-6">
                                     <div className="flex flex-col items-center text-center">
-                                        <h1 className="text-2xl font-bold">Wellcome back</h1>
-                                        <p className="text-muted-foreground text-balance">Please log in to your account</p>
+                                        <h1 className="text-2xl font-bold">Let's get started</h1>
+                                        <p className="text-muted-foreground text-balance">Create your account</p>
                                     </div>
                                     <div className="grid gap-3">
                                         <FormField
@@ -167,19 +155,12 @@ export const SignUpView = () => {
                                             )}
                                         />
                                     </div>
-                                    {!!error && (
-                                        <Alert className="bg-destructive/20 border-none">
-                                            <OctagonAlertIcon className="h-4 w-4 !text-destructive/60" />
-                                            <AlertTitle className="text-black/50">
-                                                {error}
-                                            </AlertTitle>
-                                        </Alert>
-                                    )}
 
-                                    <Button className="w-full cursor-pointer" type="submit"
+
+                                    <Button className="w-full cursor-pointer " type="submit"
                                         disabled={isloading}
                                     >
-                                        Sign In
+                                        Sign Up
                                         {isloading && (
                                             <svg className="text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
                                                 width="24" height="24">
@@ -188,7 +169,7 @@ export const SignUpView = () => {
                                                     stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"></path>
                                                 <path
                                                     d="M32 3C36.5778 3 41.0906 4.08374 45.1692 6.16256C49.2477 8.24138 52.7762 11.2562 55.466 14.9605C58.1558 18.6647 59.9304 22.9531 60.6448 27.4748C61.3591 31.9965 60.9928 36.6232 59.5759 40.9762"
-                                                    stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-900">
+                                                    stroke="currentColor" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                                                 </path>
                                             </svg>
                                         )}
