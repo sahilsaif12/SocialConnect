@@ -10,5 +10,7 @@ def ping(request):
     return JsonResponse({"ping": "pong"})
 
 urlpatterns = [
+    path("auth/", include("api.users.urls")),
     path("ping/", ping, name="ping"),
+
 ]

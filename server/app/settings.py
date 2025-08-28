@@ -63,9 +63,9 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
+    "DEFAULT_AUTHENTICATION_CLASSES":[ 
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    ],
 }
 
 AUTH_USER_MODEL = "users.User"
@@ -77,7 +77,7 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
-},
+}
 
 ROOT_URLCONF = 'app.urls'
 
@@ -126,7 +126,18 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+if os.getenv("DEBUG")=="True":
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.getenv('EMAIL_HOST')
+    EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') 
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 
+FRONTEND_URL = os.getenv("FRONTEND_URL") 
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
