@@ -52,7 +52,7 @@ export default function VerifyEmailView() {
                 <CircleCheckBig className="size-6 text-green-500" />
                 <p className="text-green-700 font-medium"> Email verified successfully!</p>
             </div>
-                    <p className="text-muted-foreground  text-center">Let's sign in to access your account</p>
+                    <p className="text-muted-foreground  text-center">Let&apos;s sign in to access your account</p>
             </>
         );
     }

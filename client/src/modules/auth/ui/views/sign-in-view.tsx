@@ -54,7 +54,7 @@ export const SignInView = () => {
                 sameSite: 'strict'
             });
             router.push("/")
-        } catch (err: any) { } //  @typescript-eslint/no-explicit-any
+        } catch (err) { } 
 
         setisloading(false);
     };

@@ -38,7 +38,7 @@ export const SignUpView = () => {
                 body: JSON.stringify(data),
             });
             setSuccess(true);
-        } catch (err: any) { }  //@typescript-eslint/no-explicit-any
+        } catch (err) { } 
 
         setisloading(false);
     };
