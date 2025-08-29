@@ -37,7 +37,7 @@ export const SignInView = () => {
             const res: {
                 access: string;
                 refresh: string;
-                data: {}
+                
             } = await apiRequest("/auth/login/", {
                 method: "POST",
                 body: JSON.stringify(data),
@@ -54,7 +54,7 @@ export const SignInView = () => {
                 sameSite: 'strict'
             });
             router.push("/")
-        } catch (err: any) { }
+        } catch (err: any) { } //  @typescript-eslint/no-explicit-any
 
         setisloading(false);
     };
@@ -73,8 +73,8 @@ export const SignInView = () => {
                         <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col items-center text-center">
-                                    <h1 className="text-2xl font-bold">Let's get started</h1>
-                                    <p className="text-muted-foreground text-balance">Create your account</p>
+                                    <h1 className="text-2xl font-bold">Welcome back</h1>
+                                    <p className="text-muted-foreground text-balance">Get inside your account</p>
                                 </div>
                                 <div className="grid gap-3">
 
@@ -125,7 +125,7 @@ export const SignInView = () => {
                                 </Button>
 
                                 <div className="text-center text-sm">
-                                    Don't have an account?{" "}
+                                    Don&apos;t have an account?{" "}
                                     <Link href="/sign-up" className="underline underline-offset-4 ">
                                         Sign Up
                                     </Link>

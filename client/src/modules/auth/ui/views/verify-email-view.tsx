@@ -31,7 +31,7 @@ export default function VerifyEmailView() {
                 }, 1000);
             })
             .catch(() => setStatus("failed"));
-    }, [searchParams]);
+    }, [searchParams]); // react-hooks/exhaustive-deps
 
     if (status === "pending") {
     

@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { showErrorToasts } from "./utils";
 
 
@@ -31,8 +30,7 @@ async function refreshAccessToken(): Promise<string | null> {
       console.error("Refresh token failed", err);
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
-      const router=useRouter()
-      router.push("/sign-in")
+       window.location.href = "/sign-in";
       return null;
     } finally {
       isRefreshing = false;
@@ -63,6 +61,10 @@ export async function apiRequest<T>(
     });
   };
 
+  if ( isPrivate && !accessToken) {
+     window.location.href = "/sign-in";
+      throw new Error("Authentication required");
+  }
   let res = await makeRequest(accessToken || undefined);
 
   // Handle expired token (401)

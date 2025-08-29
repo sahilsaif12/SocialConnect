@@ -68,7 +68,7 @@ export default function ResetPasswordView({ uid, token }: ResetPasswordProps) {
                             <div className="text-center flex flex-col h-full p-2 gap-3 justify-center items-center">
                                 <CircleCheckBig className="size-10 text-green-500" />
                                 <p className="font-medium text-muted-foreground">{message}</p>
-                                <p className="text-muted-foreground   text -sm text-center">Let's sign with your new credentials</p>
+                                <p className="text-muted-foreground   text -sm text-center">Let&apos;s sign with your new credentials</p>
                             </div>
 
                         </>
