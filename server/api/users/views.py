@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
@@ -73,6 +72,7 @@ class LoginView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=200)
+    
 
 
 
@@ -91,3 +91,22 @@ class PasswordResetConfirmView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Your password has been updated successfully"})
+
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh")
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "Successfully logged out"}, status=status.HTTP_200_OK)
+        except TokenError:
+            return Response({"detail": "Invalid or expired refresh token"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            return Response({"detail": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)

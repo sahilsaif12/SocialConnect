@@ -63,14 +63,16 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Your React app
-    "http://127.0.0.1:3000",  # Alternative localhost
+    os.getenv("FRONTEND_URL") 
 ]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES":[ 
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
 }
 
 AUTH_USER_MODEL = "users.User"
