@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { apiRequest } from "@/lib/api";
-import { Button } from "@/components/ui/button";
 import { CircleCheckBig } from "lucide-react";
+import { Loader } from "@/components/Loader";
 
 export default function VerifyEmailView() {
     const searchParams = useSearchParams();
@@ -34,7 +34,14 @@ export default function VerifyEmailView() {
     }, [searchParams]);
 
     if (status === "pending") {
-        return <p className="text-gray-600 text-center">Verifying your email...</p>;
+    
+        return (
+            <div className="flex justify-center gap-3 items-center">
+                <p className="text-gray-600 text-center">Verifying your email </p>
+                 <Loader/> 
+            </div>
+        )
+        
     }
 
     if (status === "success") {

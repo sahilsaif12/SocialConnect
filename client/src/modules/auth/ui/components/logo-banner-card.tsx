@@ -1,6 +1,6 @@
 import React from 'react'
 interface Props {
-    height?: number
+    height?: string | number
 }
 function LogoBannerCard({height}: Props) {
     return (

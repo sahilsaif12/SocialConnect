@@ -4,7 +4,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import RegisterSerializer
+from .serializers import PasswordResetSerializer, RegisterSerializer
 from django.contrib.auth import get_user_model
 from django.core.signing import TimestampSigner
 from django.core.mail import send_mail
@@ -73,3 +73,12 @@ class LoginView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=200)
+
+
+
+class PasswordResetView(APIView):
+    def post(self, request):
+        serializer = PasswordResetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "If the email exists, a reset link has been sent on the mail for reset password."}, status=status.HTTP_200_OK)

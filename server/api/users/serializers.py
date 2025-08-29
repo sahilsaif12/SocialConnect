@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from rest_framework.validators import UniqueValidator
+from django.conf import settings
 
 User = get_user_model()
 
@@ -135,3 +136,44 @@ class LoginSerializer(serializers.Serializer):
             "access": access,
             "user":self.get_user({"user": user}),
         }
+
+
+
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.encoding import smart_bytes
+from django.utils.http import urlsafe_base64_encode
+from django.core.mail import send_mail
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        try:
+           self.user = User.objects.get(email=value)
+        except User.DoesNotExist:
+            self.user= None
+
+        return value
+
+    def save(self, **kwargs):
+        user = self.user
+        if user:
+            print("user",user,user.email)
+            uid = urlsafe_base64_encode(smart_bytes(user.username))
+            token = PasswordResetTokenGenerator().make_token(user)
+
+            reset_url = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}"
+            print("user---",uid,token,reset_url)
+
+
+            send_mail(
+                "Password Reset",
+                f"Click here to reset your password: {reset_url}",
+                "no-reply@example.com",
+                [user.email],
+                fail_silently=False,
+            )
+            return reset_url
+        
+        
