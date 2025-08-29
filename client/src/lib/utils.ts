@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
-export function showErrorToasts(err: unknown, closeBtn: boolean = false, dismissible: boolean = true): void {
+export function showErrorToasts(err: unknown, ): void {
   if (err instanceof Error) {
     toast.error(err.message);
   }

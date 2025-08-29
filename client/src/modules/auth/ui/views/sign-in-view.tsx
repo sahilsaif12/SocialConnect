@@ -38,7 +38,7 @@ export const SignInView = () => {
                 access: string;
                 refresh: string;
                 data: {}
-            } = await apiRequest("/login/", {
+            } = await apiRequest("/auth/login/", {
                 method: "POST",
                 body: JSON.stringify(data),
             });

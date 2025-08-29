@@ -26,7 +26,7 @@ export default function ForgotPasswordView() {
             toast.warning("Please enter a valid email address", { position: 'top-right' });
             return
         }
-        apiRequest(`/password-reset/`, {
+        apiRequest(`/auth/password-reset/`, {
             method: "POST",
             body: JSON.stringify({ email })
         })

@@ -21,7 +21,7 @@ export default function VerifyEmailView() {
             return;
         }
 
-        apiRequest(`/verify-email/?token=${token}`, {
+        apiRequest(`/auth/verify-email/?token=${token}`, {
             method: "POST",
         })
             .then(() => {

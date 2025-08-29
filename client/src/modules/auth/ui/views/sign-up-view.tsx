@@ -36,7 +36,7 @@ export const SignUpView = () => {
 
         setisloading(true);
         try {
-            await apiRequest("/register/", {
+            await apiRequest("/auth/register/", {
                 method: "POST",
                 body: JSON.stringify(data),
             });

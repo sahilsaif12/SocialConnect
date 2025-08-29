@@ -38,7 +38,7 @@ export default function ResetPasswordView({ uid, token }: ResetPasswordProps) {
     const onSubmit = (data: PasswordResetInput) => {
 
         setisloading(true);
-        apiRequest(`/password-reset-confirm/`, {
+        apiRequest(`/auth/password-reset-confirm/`, {
             method: "POST",
             body: JSON.stringify({ ...data, uid, token })
         })
