@@ -176,4 +176,42 @@ class PasswordResetSerializer(serializers.Serializer):
             )
             return reset_url
         
+
+
+
+
+from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_decode
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    password = serializers.CharField(
+        write_only=True, 
+        min_length=8,
+        error_messages={
+            'required': 'Password is required',
+            'min_length': 'Password must be at least 8 characters long',
+            'blank': 'Password cannot be blank'
+        }
+    )
+    def validate(self, attrs):
+        try:
+            uid = smart_str(urlsafe_base64_decode(attrs.get("uid")))
+            user = User.objects.get(username=uid)
+
+            token = attrs.get("token")
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                raise serializers.ValidationError("This reset password credentials/url are not valid anymore")
+
+            self.user = user
+        except (ValueError, TypeError, OverflowError, User.DoesNotExist,DjangoUnicodeDecodeError):
+            raise serializers.ValidationError("You are not authorized to update the password")
         
+        return attrs
+
+    def save(self, **kwargs):
+        password = self.validated_data.get("password")
+        self.user.set_password(password)
+        self.user.save()
+        return self.user

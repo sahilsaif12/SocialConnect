@@ -11,10 +11,10 @@ import { toast } from "sonner";
 import { Loader } from "@/components/Loader";
 
 export default function ForgotPasswordView() {
-    const [isloading, setisloading] = useState<boolean>(true)
+    const [isloading, setisloading] = useState<boolean>(false)
     const [success, setSuccess] = useState(false);
     const [email, setEmail] = useState("");
-    const [message, setmessage] = useState<string>("If the email exists, a reset link has been sent on the mail for reset password.");
+    const [message, setmessage] = useState<string>('');
 
 
     const onSubmit = () => {

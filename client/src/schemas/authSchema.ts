@@ -26,3 +26,17 @@ export const loginSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
+
+
+
+export const passwordResetSchema = z.object({
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords doesn't match",
+  path: ["confirmPassword"],
+});
+
+export type PasswordResetInput = z.infer<typeof passwordResetSchema>;
+
