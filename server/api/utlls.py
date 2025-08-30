@@ -31,6 +31,7 @@ class SupabaseStorage:
                 with open(file, 'rb') as f:
                     file_content = f.read()
             
+            print("file read",file_content)
             # Upload the file
             response = self.client.storage.from_(bucket_name).upload(
                 path=file_path,
@@ -48,6 +49,7 @@ class SupabaseStorage:
             }
             
         except Exception as e:
+            print(e)
             return {
                 'success': False,
                 'error': str(e)

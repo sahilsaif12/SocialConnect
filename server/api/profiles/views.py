@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.views import APIView
 from django.db.models import Q
+
+from api.utlls import SupabaseStorage
 from .models import Profile, Follow
 from .serializers import ProfileSerializer, ProfileUpdateSerializer, UserListSerializer
 from django.contrib.auth import get_user_model
@@ -62,7 +64,7 @@ class MeProfileView(APIView):
     PATCH /api/users/me/ - > update own profile
     """
     permission_classes = [IsAuthenticated]
-    http_method_names = [ 'patch' ]  
+    http_method_names = [ 'patch','get' ]  
 
     def get(self, request):
         profile = _ensure_profile(request.user)
@@ -87,7 +89,7 @@ class UserListView(generics.ListAPIView):
         qs = super().get_queryset()
         
         q = self.request.query_params.get("q")
-        
+
         if q:
             qs = qs.filter(
                 Q(username__icontains=q) |
@@ -112,30 +114,24 @@ class AvatarUploadView(APIView):
         # Basic validation
         if file.content_type not in ("image/png", "image/jpeg"):
             return Response({"detail": "Only PNG or JPEG allowed."}, status=400)
+        print("file size",file.size)
         if file.size > 2 * 1024 * 1024:
             return Response({"detail": "File too large (max 2MB)."}, status=400)
+        
+        print(file.name,request.user)
+        # return Response({"detail": "working"}, status=200)
 
         storage = SupabaseStorage()
-        file_path = f"avatars/user_{self.user.id}/{image_file.name}"
-        storage.upload_file()
-        supabase = get_supabase()
-        bucket = os.environ.get("SUPABASE_AVATAR_BUCKET", "avatars")
-        ext = ".png" if file.content_type == "image/png" else ".jpg"
-        path = f"{request.user.id}/{uuid.uuid4()}{ext}"
+        file_path = f"avatars/user_{request.user.id}/{file}"
+        res=storage.upload_file(file,'avatars',file_path)
+        if res.get("success"):
+            public_url=res.get("public_url")
+            profile = _ensure_profile(request.user)
+            profile.avatar_url = public_url
+            profile.save(update_fields=["avatar_url"])
+            return Response({"avatar_url": public_url}, status=200)
+        
+        return Response({"detail": "Unable to upload the profile picture, try again laterr"}, status=500)
 
-        # Upload
-        # supabase-py expects bytes for file content:
-        content = file.read()
-        up = supabase.storage.from_(bucket).upload(path, content, file_options={"content-type": file.content_type, "upsert": True})
-        if hasattr(up, "error") and up.error:
-            return Response({"detail": "Upload failed."}, status=500)
 
-        # Public URL
-        public_url = supabase.storage.from_(bucket).get_public_url(path)
-
-        profile = _ensure_profile(request.user)
-        profile.avatar_url = public_url
-        profile.save(update_fields=["avatar_url"])
-
-        return Response({"avatar_url": public_url}, status=200)
 
