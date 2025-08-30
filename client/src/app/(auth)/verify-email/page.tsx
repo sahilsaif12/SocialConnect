@@ -1,5 +1,7 @@
+import { LoaderSpinner } from "@/components/Loader";
 import LogoBannerCard from "@/modules/auth/ui/components/logo-banner-card";
 import VerifyEmailView from "@/modules/auth/ui/views/verify-email-view";
+import { Suspense } from "react";
 
 export default function page() {
   return (
@@ -7,9 +9,12 @@ export default function page() {
       <div className="w-full space-y-5 max-w-md rounded-2xl bg-white p-5  shadow-2xl  ">
         <div className="rounded-xl overflow-hidden  bg-red-400">
 
-        <LogoBannerCard height={30} />
+          <LogoBannerCard height={30} />
         </div>
-        <VerifyEmailView />
+        <Suspense fallback={<LoaderSpinner />}>
+
+          <VerifyEmailView />
+        </Suspense>
       </div>
     </div>
   );

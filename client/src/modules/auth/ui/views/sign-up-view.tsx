@@ -12,7 +12,7 @@ import { useState } from "react";
 import { RegisterInput, registerSchema } from "@/schemas/authSchema";
 import { apiRequest } from "@/lib/api";
 import LogoBannerCard from "../components/logo-banner-card";
-import { Loader } from "@/components/Loader";
+import {  LoaderSpinner } from "@/components/Loader";
 
 export const SignUpView = () => {
     const [isloading, setisloading] = useState<boolean>(false)
@@ -160,7 +160,7 @@ export const SignUpView = () => {
                                     >
                                         Sign Up
                                         {isloading && (
-                                            <Loader/>
+                                            <LoaderSpinner/>
                                         )}
                                     </Button>
 

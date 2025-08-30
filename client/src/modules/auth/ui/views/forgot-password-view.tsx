@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import LogoBannerCard from "../components/logo-banner-card";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader } from "@/components/Loader";
+import {  LoaderSpinner } from "@/components/Loader";
 
 export default function ForgotPasswordView() {
     const [isloading, setisloading] = useState<boolean>(false)
@@ -64,7 +64,7 @@ export default function ForgotPasswordView() {
                                 >
                                     Confirm email
                                     {isloading && (
-                                       <Loader/>
+                                       <LoaderSpinner/>
                                     )}
                                 </Button>
                             </>

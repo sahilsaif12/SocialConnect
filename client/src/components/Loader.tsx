@@ -1,5 +1,5 @@
 
-export const Loader = () => {
+export const LoaderSpinner = () => {
 
 
     return(

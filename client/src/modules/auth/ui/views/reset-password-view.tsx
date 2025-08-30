@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import LogoBannerCard from "../components/logo-banner-card";
 import { Input } from "@/components/ui/input";
-import { Loader } from "@/components/Loader";
+import {  LoaderSpinner } from "@/components/Loader";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -123,7 +123,7 @@ export default function ResetPasswordView({ uid, token }: ResetPasswordProps) {
                                     >
                                         save
                                         {isloading && (
-                                            <Loader />
+                                            <LoaderSpinner />
                                         )}
                                     </Button>
 

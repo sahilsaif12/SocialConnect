@@ -14,7 +14,7 @@ import { useState } from "react";
 import { LoginInput, loginSchema } from "@/schemas/authSchema";
 import { apiRequest } from "@/lib/api";
 import LogoBannerCard from "../components/logo-banner-card";
-import { Loader } from "lucide-react";
+import { LoaderSpinner } from "@/components/Loader";
 
 
 
@@ -119,9 +119,10 @@ export const SignInView = () => {
                                     disabled={isloading}
                                 >
                                     Sign In
-                                    {isloading && (
-                                        <Loader/>
-                                    )}
+                                    {isloading && 
+                                        <LoaderSpinner/>
+                                        
+                                    }
                                 </Button>
 
                                 <div className="text-center text-sm">
