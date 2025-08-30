@@ -1,0 +1,7 @@
+    {
+        "src": "app/wsgi.py",
+        "use": "@vercel/python",
+
+        "src": "/(.*)",
+        "dest": "app/wsgi.py"
+      }
