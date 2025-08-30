@@ -1,5 +1,8 @@
+{
+  "routes": [
     {
-        "use": "@vercel/python",
-
+      "src": "/(.*)",
       "dest": "app/wsgi.py"
-      }
+    }
+  ]
+}
