@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
+from api.utlls import SupabaseStorage
 from .serializers import PasswordResetConfirmSerializer, PasswordResetSerializer, RegisterSerializer
 from django.contrib.auth import get_user_model
 from django.core.signing import TimestampSigner
@@ -110,3 +111,16 @@ class LogoutView(APIView):
             return Response({"detail": "Invalid or expired refresh token"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception:
             return Response({"detail": "Something went wrong"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            "isAuthenticated": True,
+            # "user": UserSerializer(request.user).data
+        })
+

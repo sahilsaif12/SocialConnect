@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     "corsheaders",
 
     'api',
-    'api.users'
+    'api.users',
+    'api.profiles'
 ]
 
 MIDDLEWARE = [
@@ -165,3 +166,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY')
+SUPABASE_SERVICE_KEY = os.getenv('SUPABASE_SERVICE_KEY')

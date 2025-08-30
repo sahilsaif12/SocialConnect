@@ -1,0 +1,141 @@
+from django.shortcuts import render
+
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework.views import APIView
+from django.db.models import Q
+from .models import Profile, Follow
+from .serializers import ProfileSerializer, ProfileUpdateSerializer, UserListSerializer
+from django.contrib.auth import get_user_model
+
+import os
+import uuid
+
+User = get_user_model()
+
+def _ensure_profile(user):
+    profile, _ = Profile.objects.get_or_create(user=user)
+    return profile
+
+def _can_view_profile(request_user, target_user, profile):
+    if request_user and (request_user.is_staff or request_user == target_user):
+        return True
+    vis = profile.visibility
+    if vis == Profile.Visibility.PUBLIC:
+        return True
+    if vis == Profile.Visibility.PRIVATE:
+        return False
+    if vis == Profile.Visibility.FOLLOWERS_ONLY:
+        if not request_user or not request_user.is_authenticated:
+            return False
+        return Follow.objects.filter(follower=request_user, following=target_user).exists()
+    return False
+
+
+
+class UserDetailView(APIView):
+    """
+    GET /api/users/{username}/ 
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        profile = _ensure_profile(user)
+        if not _can_view_profile(request.user, user, profile):
+            return Response({"message": "This profile is not available for you"}, status=400)
+        data = ProfileSerializer(profile, context={'request': request}).data
+        return Response(data)
+
+    
+    def put(self, request,username):
+        return Response({"msg":"hello"},status=200)
+
+
+
+
+class MeProfileView(APIView):
+    """
+    GET /api/users/me/ -> get own profile
+    PATCH /api/users/me/ - > update own profile
+    """
+    permission_classes = [IsAuthenticated]
+    http_method_names = [ 'patch' ]  
+
+    def get(self, request):
+        profile = _ensure_profile(request.user)
+        return Response(ProfileSerializer(profile).data)
+
+    def patch(self, request):
+        profile = _ensure_profile(request.user)
+        ser = ProfileUpdateSerializer(profile, data=request.data, partial=True)
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        return Response(ProfileSerializer(profile).data)
+
+class UserListView(generics.ListAPIView):
+    """
+    GET /api/users/?q=search  
+    """
+    queryset = User.objects.filter(is_active=True)
+    serializer_class = UserListSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        
+        q = self.request.query_params.get("q")
+        
+        if q:
+            qs = qs.filter(
+                Q(username__icontains=q) |
+                Q(first_name__icontains=q) |
+                Q(last_name__icontains=q)
+            )
+        
+        return qs
+
+class AvatarUploadView(APIView):
+    """
+    POST /api/users/me/avatar/  (multipart/form-data: file=<image>)
+    Validates, uploads to Supabase Storage, saves profile.avatar_url
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        file = request.FILES.get("file")
+        if not file:
+            return Response({"detail": "No file provided."}, status=400)
+
+        # Basic validation
+        if file.content_type not in ("image/png", "image/jpeg"):
+            return Response({"detail": "Only PNG or JPEG allowed."}, status=400)
+        if file.size > 2 * 1024 * 1024:
+            return Response({"detail": "File too large (max 2MB)."}, status=400)
+
+        storage = SupabaseStorage()
+        file_path = f"avatars/user_{self.user.id}/{image_file.name}"
+        storage.upload_file()
+        supabase = get_supabase()
+        bucket = os.environ.get("SUPABASE_AVATAR_BUCKET", "avatars")
+        ext = ".png" if file.content_type == "image/png" else ".jpg"
+        path = f"{request.user.id}/{uuid.uuid4()}{ext}"
+
+        # Upload
+        # supabase-py expects bytes for file content:
+        content = file.read()
+        up = supabase.storage.from_(bucket).upload(path, content, file_options={"content-type": file.content_type, "upsert": True})
+        if hasattr(up, "error") and up.error:
+            return Response({"detail": "Upload failed."}, status=500)
+
+        # Public URL
+        public_url = supabase.storage.from_(bucket).get_public_url(path)
+
+        profile = _ensure_profile(request.user)
+        profile.avatar_url = public_url
+        profile.save(update_fields=["avatar_url"])
+
+        return Response({"avatar_url": public_url}, status=200)
+

@@ -75,7 +75,9 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User(
             email=validated_data["email"],
-            username=validated_data.get("username", validated_data["email"])
+            username=validated_data["username"],
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"]
         )
         user.set_password(validated_data["password"])  # hash password
         user.is_active = False 
@@ -215,3 +217,28 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         self.user.set_password(password)
         self.user.save()
         return self.user
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'date_joined', 'last_login_at','is_active']
+        read_only_fields = ['id','email', 'date_joined', 'last_login_at']
+        
+
+    def to_representation(self, instance):
+        """Override to conditionally include sensitive fields"""
+        representation = super().to_representation(instance)
+        
+        # Check if this is the requesting user's own profile
+        request = self.context.get('request')
+        if request and request.user != instance:
+            # Remove sensitive fields for other users
+            representation.pop('email', None)
+            representation.pop('date_joined', None)
+            representation.pop('last_login_at', None)
+            representation.pop('is_active', None)
+        
+        return representation
+
