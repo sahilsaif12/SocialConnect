@@ -1,3 +1,4 @@
+import { getServerCookie, setServerCookie } from "@/app/actions/cookies";
 import { showErrorToasts } from "./utils";
 import Cookies from 'js-cookie';
 
@@ -18,23 +19,23 @@ function setClientCookie(key: string, value: any, options?: { secure?: boolean; 
         })
 }
 
-async function getServerCookie(key: string): Promise<string | undefined> {
-    // Dynamic import to avoid including next/headers in client bundle
-    const { cookies } = await import('next/headers')
-    const cookieStore = await cookies()
-    return cookieStore.get(key)?.value
+// async function getServerCookie(key: string): Promise<string | undefined> {
+//     // Dynamic import to avoid including next/headers in client bundle
+//     const { cookies } = await import('next/headers')
+//     const cookieStore = await cookies()
+//     return cookieStore.get(key)?.value
  
-}
+// }
 
-async function setServerCookie(key: string,value:any){
-        const { cookies } = await import('next/headers')
-        const cookieStore = await cookies()
-        cookieStore.set(key, value, {
-          secure: true,
-          sameSite: 'strict',
-        })
+// async function setServerCookie(key: string,value:any){
+//         const { cookies } = await import('next/headers')
+//         const cookieStore = await cookies()
+//         cookieStore.set(key, value, {
+//           secure: true,
+//           sameSite: 'strict',
+//         })
  
-}
+// }
 
 async function getUniversalCookie(key: string): Promise<string | undefined> {
   if (typeof window === 'undefined') {
