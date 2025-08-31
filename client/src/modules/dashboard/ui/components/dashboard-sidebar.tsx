@@ -8,34 +8,37 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { DashboardUserButton } from "./dashboard-user-button"
+import { useStore } from "@/store/useStore"
 
-
-const sections = [
-    {
-        icon: Home,
-        label: "Home",
-        href: "/"
-    },
-    {
-        icon: Search,
-        label: "Explore",
-        href: "/explore"
-    },
-    {
-        icon: User,
-        label: "Profile",
-        href: `/profile/sahil_23`
-    },
-    {
-        icon: BellRing ,
-        label: "Notifications",
-        href: "/notifications"
-    },
-]
 
 
 
 export const DashboardSidebar = () => {
+    const {userData:data}=useStore()
+    
+    
+    const sections = [
+        {
+            icon: Home,
+            label: "Home",
+            href: "/"
+        },
+        {
+            icon: Search,
+            label: "Explore",
+            href: "/explore"
+        },
+        {
+            icon: User,
+            label: "Profile",
+            href: `/profile/${data?.user.username}`
+        },
+        {
+            icon: BellRing ,
+            label: "Notifications",
+            href: "/notifications"
+        },
+    ]
     const pathname = usePathname()
     return (
         <Sidebar>

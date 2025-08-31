@@ -1,4 +1,5 @@
 
+import { requireNoAuth } from "@/lib/auth";
 import ResetPasswordView from "@/modules/auth/ui/views/reset-password-view";
 import { notFound } from "next/navigation";
 
@@ -8,6 +9,8 @@ interface PageParams {
   }>;
 }
 export default async function page({ params }:PageParams) {
+    await requireNoAuth()
+  
   const resolvedParams = await params;
 
     const [uid, token] = resolvedParams.params;

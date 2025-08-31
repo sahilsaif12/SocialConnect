@@ -1,9 +1,12 @@
 import { LoaderSpinner } from "@/components/Loader";
+import { requireNoAuth } from "@/lib/auth";
 import LogoBannerCard from "@/modules/auth/ui/components/logo-banner-card";
 import VerifyEmailView from "@/modules/auth/ui/views/verify-email-view";
 import { Suspense } from "react";
 
-export default function page() {
+export default async function page() {
+    await requireNoAuth()
+  
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full space-y-5 max-w-md rounded-2xl bg-white p-5  shadow-2xl  ">

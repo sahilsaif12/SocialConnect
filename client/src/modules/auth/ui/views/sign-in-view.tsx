@@ -10,17 +10,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoginInput, loginSchema } from "@/schemas/authSchema";
 import { apiRequest } from "@/lib/api";
 import LogoBannerCard from "../components/logo-banner-card";
 import { LoaderSpinner } from "@/components/Loader";
+import { requireNoAuth } from "@/lib/auth";
 
 
 
 export const SignInView = () => {
     const router = useRouter()
     const [isloading, setisloading] = useState<boolean>(false)
+    //  await requireNoAuth()
 
     const form = useForm<LoginInput>({
         resolver: zodResolver(loginSchema),
@@ -29,6 +31,8 @@ export const SignInView = () => {
             password: "",
         }
     });
+
+
 
     const onSubmit = async (data: LoginInput) => {
 
@@ -42,8 +46,8 @@ export const SignInView = () => {
                 method: "POST",
                 body: JSON.stringify(data),
             });
-            console.log("login res", res);
 
+            
             Cookies.set('access_token', res.access, {
                 secure: true,
                 sameSite: 'strict'

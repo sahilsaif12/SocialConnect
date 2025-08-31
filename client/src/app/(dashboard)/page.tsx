@@ -1,5 +1,7 @@
+import { requireAuth } from "@/lib/auth";
 
-export default function Home() {
+export default async function page() {
+await requireAuth()
   return (
     <div className="text-3xl font-bold underline text-black"
     >
