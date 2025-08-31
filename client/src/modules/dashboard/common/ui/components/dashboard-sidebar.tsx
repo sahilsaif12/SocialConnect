@@ -9,12 +9,17 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { DashboardUserButton } from "./dashboard-user-button"
 import { useStore } from "@/store/useStore"
+import { Profile } from "@/modules/auth/types"
+import { useEffect } from "react"
 
 
 
+interface DashboardSidebarProps{
+    user: Profile 
+}
 
-export const DashboardSidebar = () => {
-    const {userData:data}=useStore()
+export const DashboardSidebar = ({user}:DashboardSidebarProps) => {
+    const {userData:data,setUser}=useStore()
     
     
     const sections = [
@@ -40,6 +45,11 @@ export const DashboardSidebar = () => {
         },
     ]
     const pathname = usePathname()
+    
+    useEffect(() => {
+      setUser(user)
+    }, [])
+    
     return (
         <Sidebar>
             <SidebarHeader className="text-sidebar-accent-foreground">

@@ -1,3 +1,8 @@
+import { apiRequest } from "@/lib/api"
+import { requireAuth } from "@/lib/auth"
+import { Profile } from "@/modules/auth/types"
+import { ProfileView } from "@/modules/dashboard/profile/ui/views/profile-view"
+
 interface ProfilePageProps {
   params: {
     username: string
@@ -5,13 +10,12 @@ interface ProfilePageProps {
 }
 
  const page=async({ params }: ProfilePageProps)=> {
-  const { username } =await params
-
+   const { username } =await params
+  const userProfile:Profile=await apiRequest(`/users/${username}`, {
+            method: "GET",
+        },true)
   return (
-    <div>
-      <h1>Profile: {username}</h1>
-      {/* Your profile content */}
-    </div>
+    <ProfileView profile={userProfile} />
   )
 }
 
