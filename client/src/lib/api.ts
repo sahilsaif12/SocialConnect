@@ -64,7 +64,6 @@ async function refreshAccessToken(): Promise<string | null> {
 
   isRefreshing = true;
   refreshPromise = (async () => {
-    console.log("here here refresh");
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/token/refresh/`, {
@@ -74,7 +73,6 @@ async function refreshAccessToken(): Promise<string | null> {
           refresh: await getUniversalCookie("refresh_token"),
         }),
       });
-      console.log("res refresh", res);
 
       if (!res.ok) throw new Error("Failed to refresh token");
 
@@ -99,10 +97,8 @@ export async function apiRequest<T>(
   options?: RequestInit,
   isPrivate: boolean = false
 ): Promise<T> {
-  // const Cookies = await cookies();
   const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}${url}`;
   const accessToken = await getUniversalCookie("access_token");
-  // console.log("accessToken",accessToken,accessToken?.value);
 
   const makeRequest = async (token?: string): Promise<Response> => {
     return fetch(apiUrl, {
@@ -115,7 +111,6 @@ export async function apiRequest<T>(
       cache: "no-store",
     });
   };
-  console.log(isPrivate, accessToken);
 
   if (isPrivate && !accessToken) {
     throw new Error("Authentication required");
@@ -132,11 +127,8 @@ export async function apiRequest<T>(
   }
 
   // Handle expired token (401)
-  console.log("res", res);
-
   if (isPrivate && res.status === 401 && await getUniversalCookie("refresh_token")) {
     const newAccessToken = await refreshAccessToken();
-    console.log("newAccessToken", newAccessToken);
 
     if (newAccessToken) {
       res = await makeRequest(newAccessToken);

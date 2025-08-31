@@ -10,15 +10,7 @@ export async function checkAuth() {
             method: "GET",
         },true);
 
-        // const {setUser}=useStore()
-        console.log("user__user",user);
-        
-        // setUser(user as Profile)
-        
-    } catch (error) {
-        console.log("error",error);
-        
-    }
+    } catch (error) {    }
     return user;
 }
 
@@ -32,7 +24,6 @@ export async function requireAuth() {
 
 export async function requireNoAuth() {
     const user = await checkAuth();
-    console.log("user__",user);
     
     if (user) {
         redirect('/');

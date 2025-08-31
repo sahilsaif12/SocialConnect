@@ -4,7 +4,7 @@ import { create } from 'zustand'
 interface Store {
   // User state
   userData: Profile | null
-  setUser: (profile: Profile) => void
+  setUser: (profile: Profile ) => void
   clearUser: () => void
   
   // App state
@@ -21,7 +21,7 @@ export const useStore = create<Store>((set) => ({
   // User state
   userData: null,
   setUser: (userData) => set({ userData }),
-  clearUser: () => set({ userData: null }),
+  clearUser: () => set({ userData:null }),
 
   
   // App state

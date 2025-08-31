@@ -44,7 +44,7 @@ export const DashboardUserButton = () => {
                 }
 
                 <div className="flex flex-col flex-1 text-left gap-0.5 min-w-0 overflow-hidden text-black">
-                    <p className="text-md font-bold tracking-wider text-gray-950 truncate w-full">
+                    <p className="text-md font-bold tracking-wide text-gray-950 truncate w-full">
                         {data?.user.first_name} {' '}  {data?.user.last_name} 
                     </p>
                     <p className="text-sm font-sans truncate text-gray-900   w-full">

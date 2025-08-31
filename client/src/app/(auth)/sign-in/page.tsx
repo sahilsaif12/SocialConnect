@@ -6,8 +6,7 @@ import React from 'react'
 const page=async()=> {
 
   
-let tem=await requireNoAuth()
-console.log("tem",tem);
+await requireNoAuth()
 
   return (
     <SignInView />

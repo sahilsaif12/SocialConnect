@@ -14,7 +14,6 @@ export function showErrorToasts(err: unknown, ): void {
 
   
   if (err && typeof err === 'object' && err !== null) {
-    console.log("err", err);
 
     Object.entries(err).forEach(([field, messages]) => {
 

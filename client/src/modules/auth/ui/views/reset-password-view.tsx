@@ -32,7 +32,6 @@ export default function ResetPasswordView({ uid, token }: ResetPasswordProps) {
             confirmPassword: ""
         }
     });
-    console.log(uid, token);
 
 
     const onSubmit = (data: PasswordResetInput) => {
