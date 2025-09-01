@@ -7,7 +7,11 @@ interface Store {
   setUser: (profile: Profile ) => void
   clearUser: () => void
   
-  // App state
+  // profile state
+   currentProfile: Profile | null
+  setCurrentProfile: (profile: Profile ) => void
+
+
   sidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
   
@@ -22,6 +26,11 @@ export const useStore = create<Store>((set) => ({
   userData: null,
   setUser: (userData) => set({ userData }),
   clearUser: () => set({ userData:null }),
+
+  
+  // profile state
+  currentProfile: null,
+  setCurrentProfile: (currentProfile) => set({ currentProfile }),
 
   
   // App state

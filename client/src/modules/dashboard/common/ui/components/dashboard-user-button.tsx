@@ -58,15 +58,15 @@ export const DashboardUserButton = () => {
                 <DropdownMenuLabel>
                     <div className="flex flex-col  gap-1">
                         <span className="font-medium truncate"> {data?.user.first_name} {' '}  {data?.user.last_name}  </span>
-                        <span className="font-normal text-sm text-muted-foreground truncate">{data?.user.email} </span>
+                        <span className="font-normal text-sm text-gray-700 truncate">{data?.user.email} </span>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <div className="flex  p-2 py-1 items-center justify-between rounded-lg mb-2 hover:bg-amber-50   cursor-pointer">
+                <div className="flex  p-3 py-1 items-center justify-between rounded-lg mb-2 hover:bg-amber-50   cursor-pointer">
                     Update profile
                     <UserPen className="size-4" />
                 </div>
-                <div onClick={onLogout} className="flex p-2 py-1 items-center rounded-lg mb-1 hover:bg-red-400 bg-red-500/40 !important justify-between cursor-pointer">
+                <div onClick={onLogout} className="flex p-3 py-1 items-center rounded-lg mb-1 hover:bg-red-400 bg-red-500/40 !important justify-between cursor-pointer">
                     Logout
                     {logoutLoading? 
                     <LoaderSpinner size={18} />

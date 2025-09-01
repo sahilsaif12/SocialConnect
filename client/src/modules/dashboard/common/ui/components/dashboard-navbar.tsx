@@ -24,9 +24,9 @@ export const DashboardNavbar = () => {
     }, []);
     
     return (
-        <>
+        <div className="fixed w-full bg-yellow-50 z-20   top-0">
             <DashboardSearchCommand open={commandOpen} setOpen={setCommandOpen} />
-            <nav className="flex px-4 gap-x-2 py-3 items-center border-b ">
+            <nav className=" backdrop-blur-2xl   flex px-4 gap-x-2 py-3 items-center border-b ">
                 <Button className="size-9 cursor-pointer" variant="outline" onClick={toggleSidebar} >
                     {
                         (state === "collapsed" || isMobile) ?
@@ -48,6 +48,6 @@ export const DashboardNavbar = () => {
                     </kbd>
                 </Button>
             </nav>
-        </>
+        </div>
     )
 }
