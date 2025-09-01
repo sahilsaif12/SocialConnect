@@ -3,23 +3,19 @@
 import { Separator } from "@/components/ui/separator"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
-import { BellRing, BotIcon, Home, Search, StarIcon, User, VideoIcon } from "lucide-react"
+import { BellRing,  Home, Search,User } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { DashboardUserButton } from "./dashboard-user-button"
 import { useStore } from "@/store/useStore"
-import { Profile } from "@/modules/auth/types"
-import { useEffect } from "react"
-
 
 
 interface DashboardSidebarProps{
-    user: Profile 
 }
 
-export const DashboardSidebar = ({user}:DashboardSidebarProps) => {
-    const {userData:data,setUser}=useStore()
+export const DashboardSidebar = ({}:DashboardSidebarProps) => {
+    const {userData:data}=useStore()
     
     
     const sections = [
@@ -46,10 +42,7 @@ export const DashboardSidebar = ({user}:DashboardSidebarProps) => {
     ]
     const pathname = usePathname()
     
-    useEffect(() => {
-      setUser(user)
-    }, [])
-    
+   
     return (
         <Sidebar>
             <SidebarHeader className="text-sidebar-accent-foreground">

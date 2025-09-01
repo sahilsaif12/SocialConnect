@@ -1,41 +1,32 @@
-import { getServerCookie, setServerCookie } from "@/app/actions/cookies";
 import { showErrorToasts } from "./utils";
 import Cookies from 'js-cookie';
 
 
 let isRefreshing = false;
-let refreshPromise: Promise<string | null> | null = null;
+let refreshPromise: Promise<{access_token: string,refresh_token:string} | null> | null = null;
 
 
 
-function getClientCookie(key: string): string | undefined {
+export function getClientCookie(key: string): string | undefined {
   return Cookies.get(key)
 }
 
-function setClientCookie(key: string, value: any, options?: { secure?: boolean; sameSite?: string }) {
+export function setClientCookie(key: string, value: any, options?: { secure?: boolean; sameSite?: string }) {
   Cookies.set(key,value,{
           secure: true,
           sameSite: 'strict',
         })
 }
 
-// async function getServerCookie(key: string): Promise<string | undefined> {
-//     // Dynamic import to avoid including next/headers in client bundle
-//     const { cookies } = await import('next/headers')
-//     const cookieStore = await cookies()
-//     return cookieStore.get(key)?.value
+async function getServerCookie(key: string): Promise<string | undefined> {
+    // Dynamic import to avoid including next/headers in client bundle
+    const { cookies } = await import('next/headers')
+    const cookieStore = await cookies()
+    return cookieStore.get(key)?.value
  
-// }
+}
 
-// async function setServerCookie(key: string,value:any){
-//         const { cookies } = await import('next/headers')
-//         const cookieStore = await cookies()
-//         cookieStore.set(key, value, {
-//           secure: true,
-//           sameSite: 'strict',
-//         })
- 
-// }
+
 
 async function getUniversalCookie(key: string): Promise<string | undefined> {
   if (typeof window === 'undefined') {
@@ -49,7 +40,8 @@ async function getUniversalCookie(key: string): Promise<string | undefined> {
 
 async function setUniversalCookie(key: string,value:any) {
    if (typeof window === 'undefined') {
-        setServerCookie(key,value)
+        //will set it later via client component as we can set cookies from server component
+        return
       } else {
         setClientCookie(key, value)
       }
@@ -58,7 +50,7 @@ async function setUniversalCookie(key: string,value:any) {
 
 
 
-async function refreshAccessToken(): Promise<string | null> {
+async function refreshAccessToken(): Promise< {access_token: string,refresh_token:string} | null> {
   if (isRefreshing && refreshPromise) {
     return refreshPromise;
   }
@@ -81,7 +73,7 @@ async function refreshAccessToken(): Promise<string | null> {
 
       setUniversalCookie('access_token',data.access)
       setUniversalCookie('refresh_token',data.refresh)
-      return data.access;
+      return {access_token:data.access, refresh_token:data.refresh};
     } catch (err) {
       return null;
     } finally {
@@ -128,11 +120,12 @@ export async function apiRequest<T>(
   }
 
   // Handle expired token (401)
+  let tokens
   if (isPrivate && res.status === 401 && await getUniversalCookie("refresh_token")) {
-    const newAccessToken = await refreshAccessToken();
+     tokens = await refreshAccessToken();
 
-    if (newAccessToken) {
-      res = await makeRequest(newAccessToken);
+    if (tokens?.access_token) {
+      res = await makeRequest(tokens.access_token);
     }
     else {
       throw new Error("Authentication required");
@@ -149,5 +142,11 @@ export async function apiRequest<T>(
     }
   }
 
-  return res.json();
+  let data=await res.json();
+  if(tokens){
+    data['access_token']=tokens.access_token
+    data['refresh_token']=tokens.refresh_token
+  }
+
+  return data
 }
