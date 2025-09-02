@@ -236,7 +236,6 @@ class UserSerializer(serializers.ModelSerializer):
         if request and request.user != instance:
             # Remove sensitive fields for other users
             representation.pop('email', None)
-            representation.pop('date_joined', None)
             representation.pop('last_login_at', None)
             representation.pop('is_active', None)
         

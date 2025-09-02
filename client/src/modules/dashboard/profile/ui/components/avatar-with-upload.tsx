@@ -87,7 +87,7 @@ function AvatarWithUpload({ avatar_url, first_name, last_name, ownProfile }: Ava
                     {avatarHovered && (
                         <label htmlFor="avatar-upload" className="absolute inset-0 cursor-pointer">
                             <div className="absolute inset-0 bg-black/45 rounded-full flex justify-center items-center  transition-opacity">
-                                <ImagePlus className="w-8 h-8 text-white" />
+                                <ImagePlus className="w-6 h-6 text-white" />
                             </div>
                             <input
                                 id="avatar-upload"

@@ -1,42 +1,82 @@
-import { Calendar, MapPin, Link as LinkIcon, Edit3, GlobeLock } from 'lucide-react';
-// import { VerifiedBadge } from '@/components/ui/verified-badge';
+import { Calendar, MapPin, Link as LinkIcon, Edit3, GlobeLock, ImagePlus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useStore } from '@/store/useStore';
 import { formatDateToMonthYear, formatNumberMinimal } from '@/lib/utils';
+import { useState } from 'react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Visibility } from '@/modules/auth/types';
+import { ProfileEditDialog } from '../components/profile-edit-dialog';
+import { apiRequest } from '@/lib/api';
+import { LoaderSpinner } from '@/components/Loader';
+import AvatarWithUpload from '../components/avatar-with-upload';
 
 export function ProfileInfoView() {
-    const {currentProfile,userData}=useStore()
+  const { currentProfile, userData } = useStore()
+  const [profileVisibility, setprofileVisibility] = useState<Visibility>(currentProfile?.visibility as Visibility);
+  const [isProfileEditDialogOpen, setIsProfileEditDialogOpen] = useState<boolean>(false);
+
   
   return (
     <div className="px-4 pb-4  mt-[9%]">
       <div className="flex justify-between items-center mb-4">
-        <div className="relative mt-3 ">
-          <Avatar className="w-32 h-32 border-4 shadow-xl border-primary">
-            <AvatarImage 
-              src={currentProfile?.avatar_url} 
-              alt={currentProfile?.user.first_name}
-            />
-            <AvatarFallback className="bg-amber-300/50 text-gray-700 font-bold text-2xl">{currentProfile?.user.first_name.charAt(0)}{currentProfile?.user.last_name.charAt(0)} </AvatarFallback>
-          </Avatar>
-        </div>
+        <AvatarWithUpload avatar_url={currentProfile?.avatar_url} first_name={currentProfile?.user.first_name} last_name={currentProfile?.user.last_name} ownProfile={currentProfile?.user.username===userData?.user.username} />
         <div className="flex items-center space-x-2 mt-3">
-          {currentProfile?.user.username===userData?.user.username ?
-          <>
-          <Button variant="ghost" size="icon" className=" cursor-pointer hover:bg-transparent">
-            <Edit3 />
-          </Button>
-          <Button variant="ghost" size="icon" className=" cursor-pointer hover:bg-transparent">
-            <GlobeLock />
-          </Button>
-          
-          </>
-          :
-          
-          <Button className=" text-white font-semibold bg-yellow-600 hover:bg-yellow-600/80 cursor-pointer px-6">
-            Follow
-          </Button>
-           }
+          {currentProfile?.user.username === userData?.user.username ?
+            <>
+              <Button variant="ghost" onClick={() => setIsProfileEditDialogOpen(true)} className=" border-2 border-yellow-700/50  rounded-full hover:bg-yellow-100/70 hover:border-primary/50 cursor-pointer ">
+                <Edit3 />
+                <span>
+
+                  Edit profile
+                </span>
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+
+                  <Button variant="ghost" size="icon" className=" cursor-pointer hover:bg-transparent">
+                    <GlobeLock />
+                  </Button>
+
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-yellow-100 p-0 border-yellow-300 shadow-xl text-gray-800">
+                  <div className='mb-2 p-2 bg-primary/80 font-semibold tracking-wide text-sm text-amber-50 '>Profile privacy</div>
+                  <DropdownMenuItem
+                    onClick={() => { }}
+                    className=" data-[highlighted]:bg-transparent cursor-pointer flex justify-between"
+                  >
+                    Public
+
+                    {profileVisibility === 'public' && <Check />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => { }}
+                    className=" data-[highlighted]:bg-transparent cursor-pointer flex justify-between"
+                  >
+                    Private
+                    {profileVisibility === 'private' && <Check />}
+
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => { }}
+                    className=" data-[highlighted]:bg-transparent  cursor-pointer flex justify-between "
+                  >
+                    Followers only
+                    {profileVisibility === 'followers_only' && <Check />}
+
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+
+
+            </>
+            :
+
+            <Button className=" text-white font-semibold bg-yellow-600 hover:bg-yellow-600/80 cursor-pointer px-6">
+              Follow
+            </Button>
+          }
         </div>
       </div>
 
@@ -53,20 +93,20 @@ export function ProfileInfoView() {
 
         <div className="flex flex-wrap items-center text-gray-700 text-sm space-x-4">
           {currentProfile?.location &&
-          <div className="flex items-center space-x-1">
-            <MapPin className="w-4 h-4" />
-            <span>{currentProfile.location}</span>
-          </div>
-          
+            <div className="flex items-center space-x-1">
+              <MapPin className="w-4 h-4" />
+              <span>{currentProfile.location}</span>
+            </div>
+
           }
           {currentProfile?.website &&
 
-          <div className="flex items-center space-x-1">
-            <LinkIcon className="w-4 h-4" />
-            <a href={currentProfile.website} target='_blank' className="text-yellow-800 text-md hover:text-yellow-600">{currentProfile.website} </a>
-          </div>
-}
-         
+            <div className="flex items-center space-x-1">
+              <LinkIcon className="w-4 h-4" />
+              <a href={currentProfile.website} target='_blank' className="text-yellow-800 text-md font-semibold hover:text-yellow-700">{currentProfile.website} </a>
+            </div>
+          }
+
           <div className="flex items-center space-x-1">
             <Calendar className="w-4 h-4 text-black" />
             <span>Joined {formatDateToMonthYear(currentProfile?.user.date_joined as string)} </span>
@@ -98,6 +138,11 @@ export function ProfileInfoView() {
           <span>Followed by ExploreBharat, Srijit Bera, and 46 others you follow</span>
         </div> */}
       </div>
+      <ProfileEditDialog
+        open={isProfileEditDialogOpen}
+        onOpenChange={setIsProfileEditDialogOpen}
+      />
+
     </div>
   );
 }

@@ -9,7 +9,7 @@ export interface User {
     is_active?: boolean;
 }
 
-type Visibility = 'private' | 'public' | 'followers_only';
+export type Visibility = 'private' | 'public' | 'followers_only';
 
 export interface Profile {
     bio?: string;

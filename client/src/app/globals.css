@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin 'tailwind-scrollbar';
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -120,7 +122,14 @@
       mix-blend-mode: "multiply";
 }
 
-
+input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+[data-slot="textarea"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;
