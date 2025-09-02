@@ -5,6 +5,7 @@ interface Store {
   // User state
   userData: Profile | null
   setUser: (profile: Profile ) => void
+    updateUser: (partial: Partial<Profile>) => void;
   clearUser: () => void
   
   // profile state
@@ -25,6 +26,10 @@ export const useStore = create<Store>((set) => ({
   // User state
   userData: null,
   setUser: (userData) => set({ userData }),
+ updateUser: (partial) =>
+    set((state) => ({
+      userData: state.userData ? { ...state.userData, ...partial } : state.userData,
+    })),
   clearUser: () => set({ userData:null }),
 
   

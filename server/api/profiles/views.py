@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django.db.models import Q
 
@@ -11,9 +11,8 @@ from api.utlls import SupabaseStorage
 from .models import Profile, Follow
 from .serializers import ProfileSerializer, ProfileUpdateSerializer, UserListSerializer
 from django.contrib.auth import get_user_model
+from rest_framework.parsers import MultiPartParser, FormParser
 
-import os
-import uuid
 
 User = get_user_model()
 
@@ -105,20 +104,21 @@ class AvatarUploadView(APIView):
     Validates, uploads to Supabase Storage, saves profile.avatar_url
     """
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
+
         file = request.FILES.get("file")
         if not file:
             return Response({"detail": "No file provided."}, status=400)
 
         # Basic validation
-        if file.content_type not in ("image/png", "image/jpeg"):
+        if file.content_type not in ("image/png", "image/jpeg","image/jpg"):
             return Response({"detail": "Only PNG or JPEG allowed."}, status=400)
-        print("file size",file.size)
+
         if file.size > 2 * 1024 * 1024:
             return Response({"detail": "File too large (max 2MB)."}, status=400)
         
-        print(file.name,request.user)
         # return Response({"detail": "working"}, status=200)
 
         storage = SupabaseStorage()

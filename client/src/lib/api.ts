@@ -11,11 +11,10 @@ export function getClientCookie(key: string): string | undefined {
   return Cookies.get(key)
 }
 
-export function setClientCookie(key: string, value: any, options?: { secure?: boolean; sameSite?: string }) {
+export function setClientCookie(key: string, value: any) {
   Cookies.set(key,value,{
-          secure: true,
-          sameSite: 'strict',
-        })
+    expires:7
+  })
 }
 
 async function getServerCookie(key: string): Promise<string | undefined> {
@@ -75,6 +74,8 @@ async function refreshAccessToken(): Promise< {access_token: string,refresh_toke
       setUniversalCookie('refresh_token',data.refresh)
       return {access_token:data.access, refresh_token:data.refresh};
     } catch (err) {
+      console.log("errrr",err);
+      
       return null;
     } finally {
       isRefreshing = false;
@@ -97,7 +98,7 @@ export async function apiRequest<T>(
     return fetch(apiUrl, {
       ...options,
       headers: {
-        "Content-Type": "application/json",
+        // "Content-Type": "application/json",
         ...(options?.headers || {}),
         ...(isPrivate && token ? { Authorization: `Bearer ${token}` } : {}),
       },
@@ -123,7 +124,8 @@ export async function apiRequest<T>(
   let tokens
   if (isPrivate && res.status === 401 && await getUniversalCookie("refresh_token")) {
      tokens = await refreshAccessToken();
-
+     console.log("tokens",tokens);
+     
     if (tokens?.access_token) {
       res = await makeRequest(tokens.access_token);
     }

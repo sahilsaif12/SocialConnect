@@ -23,6 +23,11 @@ class SupabaseStorage:
             Public URL of the uploaded file
         """
         try:
+
+            existing_files = self.client.storage.from_(bucket_name).get_public_url(file_path)
+            if existing_files:
+                self.delete_file(bucket_name,file_path)
+
             # If file is a Django UploadedFile object
             if hasattr(file, 'read'):
                 file_content = file.read()
@@ -31,7 +36,7 @@ class SupabaseStorage:
                 with open(file, 'rb') as f:
                     file_content = f.read()
             
-            print("file read",file_content)
+            # print("file read",file_content)
             # Upload the file
             response = self.client.storage.from_(bucket_name).upload(
                 path=file_path,
