@@ -12,6 +12,9 @@ interface Store {
    currentProfile: Profile | null
   setCurrentProfile: (profile: Profile ) => void
 
+  isAvatarUploading:boolean
+  setIsAvatarUploading:(isUploading:boolean)=>void
+
 
   sidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
@@ -36,6 +39,9 @@ export const useStore = create<Store>((set) => ({
   // profile state
   currentProfile: null,
   setCurrentProfile: (currentProfile) => set({ currentProfile }),
+
+   isAvatarUploading:false,
+  setIsAvatarUploading: (isAvatarUploading) => set({ isAvatarUploading }),
 
   
   // App state

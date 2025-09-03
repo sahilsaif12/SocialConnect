@@ -88,8 +88,9 @@ async function refreshAccessToken(): Promise< {access_token: string,refresh_toke
 
 export async function apiRequest<T>(
   url: string,
-  options?: RequestInit,
-  isPrivate: boolean = false
+  options: RequestInit,
+  isPrivate: boolean = false,
+  filesIncludes:boolean=false
 ): Promise<T> {
   const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}${url}`;
   const accessToken = await getUniversalCookie("access_token");
@@ -98,7 +99,7 @@ export async function apiRequest<T>(
     return fetch(apiUrl, {
       ...options,
       headers: {
-        // "Content-Type": "application/json",
+      ...( !filesIncludes && {"Content-Type": "application/json"}),
         ...(options?.headers || {}),
         ...(isPrivate && token ? { Authorization: `Bearer ${token}` } : {}),
       },

@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useStore } from '@/store/useStore';
 import { formatDateToMonthYear, formatNumberMinimal } from '@/lib/utils';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Visibility } from '@/modules/auth/types';
+import { Profile, Visibility } from '@/modules/auth/types';
 import { ProfileEditDialog } from '../components/profile-edit-dialog';
 import { apiRequest } from '@/lib/api';
 import { LoaderSpinner } from '@/components/Loader';
@@ -16,11 +16,19 @@ export function ProfileInfoView() {
   const [profileVisibility, setprofileVisibility] = useState<Visibility>(currentProfile?.visibility as Visibility);
   const [isProfileEditDialogOpen, setIsProfileEditDialogOpen] = useState<boolean>(false);
 
-  
+  const profileData: Profile | null = useMemo(() => {
+    if (!currentProfile || !userData) return null;
+
+    return currentProfile.user.username === userData.user.username
+      ? userData
+      : currentProfile;
+  }, [currentProfile, userData]);
+
+
   return (
     <div className="px-4 pb-4  mt-[9%]">
       <div className="flex justify-between items-center mb-4">
-        <AvatarWithUpload avatar_url={currentProfile?.avatar_url} first_name={currentProfile?.user.first_name} last_name={currentProfile?.user.last_name} ownProfile={currentProfile?.user.username===userData?.user.username} />
+        <AvatarWithUpload avatar_url={profileData?.avatar_url} first_name={profileData?.user.first_name} last_name={profileData?.user.last_name} ownProfile={currentProfile?.user.username === userData?.user.username} />
         <div className="flex items-center space-x-2 mt-3">
           {currentProfile?.user.username === userData?.user.username ?
             <>
@@ -83,43 +91,43 @@ export function ProfileInfoView() {
       <div className="space-y-3">
         <div>
           <div className="flex items-center space-x-1 mb-1">
-            <h2 className="text-xl font-bold text-gray-800">{currentProfile?.user.first_name} {' '} {currentProfile?.user.last_name} </h2>
+            <h2 className="text-xl font-bold text-gray-800">{profileData?.user.first_name} {' '} {profileData?.user.last_name} </h2>
             {/* <VerifiedBadge /> */}
           </div>
-          <p className="text-gray-900">@{currentProfile?.user.username} </p>
+          <p className="text-gray-900">@{profileData?.user.username} </p>
         </div>
 
-        <p className="text-gray-900 text-[15px] leading-5">{currentProfile?.bio} </p>
+        <p className="text-gray-900 text-[15px] leading-5">{profileData?.bio} </p>
 
         <div className="flex flex-wrap items-center text-gray-700 text-sm space-x-4">
-          {currentProfile?.location &&
+          {profileData?.location &&
             <div className="flex items-center space-x-1">
               <MapPin className="w-4 h-4" />
-              <span>{currentProfile.location}</span>
+              <span>{profileData.location}</span>
             </div>
 
           }
-          {currentProfile?.website &&
+          {profileData?.website &&
 
             <div className="flex items-center space-x-1">
               <LinkIcon className="w-4 h-4" />
-              <a href={currentProfile.website} target='_blank' className="text-yellow-800 text-md font-semibold hover:text-yellow-700">{currentProfile.website} </a>
+              <a href={profileData.website} target='_blank' className="text-yellow-800 text-md font-semibold hover:text-yellow-700">{profileData.website} </a>
             </div>
           }
 
           <div className="flex items-center space-x-1">
             <Calendar className="w-4 h-4 text-black" />
-            <span>Joined {formatDateToMonthYear(currentProfile?.user.date_joined as string)} </span>
+            <span>Joined {formatDateToMonthYear(profileData?.user.date_joined as string)} </span>
           </div>
         </div>
 
         <div className="flex items-center space-x-6 text-sm">
           <div className="flex items-center space-x-1">
-            <span className="font-bold text-gray-800">{formatNumberMinimal(currentProfile?.following_count as number)}</span>
+            <span className="font-bold text-gray-800">{formatNumberMinimal(profileData?.following_count as number)}</span>
             <span className="text-gray-600">Following</span>
           </div>
           <div className="flex items-center space-x-1">
-            <span className="font-bold text-gray-800">{formatNumberMinimal(currentProfile?.followers_count as number)}</span>
+            <span className="font-bold text-gray-800">{formatNumberMinimal(profileData?.followers_count as number)}</span>
             <span className="text-gray-600">Followers</span>
           </div>
         </div>

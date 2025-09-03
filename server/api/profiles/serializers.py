@@ -21,9 +21,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         )
 
     def get_followers_count(self, obj):
+        return 11
         return Follow.objects.filter(following=obj.user).count()
 
     def get_following_count(self, obj):
+        return 8
         return Follow.objects.filter(follower=obj.user).count()
 
     def get_posts_count(self, obj):
@@ -31,6 +33,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         return 0
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Profile
         fields = ("bio", "website", "location", "visibility")
@@ -39,7 +42,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         if len(v) > 160:
             raise serializers.ValidationError("Bio must be at most 160 characters.")
         return v
-
+    
 class UserListSerializer(serializers.ModelSerializer):
 
     class Meta:

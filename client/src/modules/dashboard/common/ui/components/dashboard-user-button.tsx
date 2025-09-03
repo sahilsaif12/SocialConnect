@@ -1,18 +1,22 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { apiRequest } from "@/lib/api"
 import { useStore } from "@/store/useStore"
 import { ChevronUpIcon, LogOut, UserPen, UserRound } from "lucide-react"
 import {  useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Cookies from 'js-cookie';
 import { LoaderSpinner } from "@/components/Loader"
+import { ProfileEditDialog } from "@/modules/dashboard/profile/ui/components/profile-edit-dialog"
 
 
 export const DashboardUserButton = () => {
     const {userData:data}=useStore()
     const router = useRouter()
-    const [logoutLoading, setlogoutLoading] = useState(false)
+
+    const [logoutLoading, setlogoutLoading] = useState<boolean>(false)
+    const [isOpen, setisOpen] = useState<boolean>(false)
+    const [isProfileEditDialogOpen, setIsProfileEditDialogOpen] = useState<boolean>(false);
 
     const onLogout =async () => {
         setlogoutLoading(true)
@@ -29,8 +33,8 @@ export const DashboardUserButton = () => {
      }
    
     return (
-
-        <DropdownMenu >
+        <>
+        <DropdownMenu  open={isOpen} onOpenChange={setisOpen}  >
             
             <DropdownMenuTrigger className="flex items-center justify-between rounded-xl shadow-2xl shadow-stone-500  cursor-pointer  border border-border/30 p-3 gap-3 w-full bg-white/30 hover:bg-white/35 ">
                 {!data?.avatar_url ? (
@@ -54,7 +58,7 @@ export const DashboardUserButton = () => {
                 <ChevronUpIcon className="size-4 shrink-0" />
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" side="top" className="w-60 bg-white/50 rounded-2xl shadow-2xl ">
+            <DropdownMenuContent  align="end" side="top" className="w-60 bg-white/50 rounded-2xl shadow-2xl ">
                 <DropdownMenuLabel>
                     <div className="flex flex-col  gap-1">
                         <span className="font-medium truncate"> {data?.user.first_name} {' '}  {data?.user.last_name}  </span>
@@ -62,7 +66,11 @@ export const DashboardUserButton = () => {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <div className="flex  p-3 py-1 items-center justify-between rounded-lg mb-2 hover:bg-amber-50   cursor-pointer">
+                <div   onClick={() =>{
+                    setIsProfileEditDialogOpen(true)
+                    setisOpen(false)
+                } } 
+                 className="flex  p-3 py-1 items-center justify-between rounded-lg mb-2 hover:bg-amber-50   cursor-pointer">
                     Update profile
                     <UserPen className="size-4" />
                 </div>
@@ -77,5 +85,12 @@ export const DashboardUserButton = () => {
 
             </DropdownMenuContent>
         </DropdownMenu>
+
+         <ProfileEditDialog
+                open={isProfileEditDialogOpen}
+                onOpenChange={setIsProfileEditDialogOpen}
+              />
+        
+        </>
     )
 }

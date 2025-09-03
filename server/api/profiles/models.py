@@ -19,8 +19,8 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     bio = models.CharField(max_length=160, blank=True)
-    avatar_url = models.URLField(blank=True)
-    website = models.URLField(blank=True)
+    avatar_url = models.URLField(blank=True,null=True)
+    website = models.URLField(blank=True,null=True)
     location = models.CharField(max_length=100, blank=True)
     visibility = models.CharField(
         max_length=20, choices=Visibility.choices, default=Visibility.PUBLIC

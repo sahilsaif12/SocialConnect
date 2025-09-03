@@ -7,10 +7,10 @@ import { ProfileInfoView } from "./profile-info-view"
 import { ProfileTabsView } from "./profile-tabs-view"
 import { PostView } from "./post-view"
 
-interface HomeViewProps{
+interface ProfileViewProps{
     profile: Profile 
 }
-export const ProfileView=({profile}:HomeViewProps)=>{
+export const ProfileView=({profile}:ProfileViewProps)=>{
 const {setCurrentProfile}=useStore()
 useEffect(() => {
   setCurrentProfile(profile)

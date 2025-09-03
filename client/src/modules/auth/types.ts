@@ -22,3 +22,4 @@ export interface Profile {
     following_count: number;
     posts_count: number;
 }
+

@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from django.db.models import Q
 
 from api.utlls import SupabaseStorage
+from api.users.serializers import UserSerializer
 from .models import Profile, Follow
 from .serializers import ProfileSerializer, ProfileUpdateSerializer, UserListSerializer
 from django.contrib.auth import get_user_model
@@ -71,7 +72,29 @@ class MeProfileView(APIView):
 
     def patch(self, request):
         profile = _ensure_profile(request.user)
-        ser = ProfileUpdateSerializer(profile, data=request.data, partial=True)
+        user=request.user
+        # print("dataaa", request.data)
+        # return Response(True)
+        user_data = {}
+        for field in ['first_name', 'last_name']:
+            if field in request.data:
+                user_data[field] = request.data[field]
+        
+        if user_data:
+            user_serializer = UserSerializer(user, data=user_data, partial=True)
+            user_serializer.is_valid(raise_exception=True)
+            user_serializer.save()
+        
+
+        profile_data = {k: v for k, v in request.data.items() if k not in ['first_name', 'last_name']}
+        print("site",profile_data["website"])
+        if profile_data["website"]:
+            if not profile_data["website"].startswith(('http://', 'https://')):
+                profile_data["website"] = 'https://' + profile_data["website"]
+            
+        print("site",profile_data["website"])
+
+        ser = ProfileUpdateSerializer(profile, data=profile_data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
         return Response(ProfileSerializer(profile).data)
