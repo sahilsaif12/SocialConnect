@@ -38,7 +38,7 @@ function AvatarWithUpload({ avatar_url, first_name, last_name, ownProfile, shoul
             setavatarLoading(true)
             try {
                 setIsAvatarUploading(true)
-                let res: { avatar_url: string } = await apiRequest("/users/me/avatar/", {
+                const res: { avatar_url: string } = await apiRequest("/users/me/avatar/", {
                     method: "POST",
                     body: formData,
                 },

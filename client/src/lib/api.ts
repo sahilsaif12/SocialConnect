@@ -11,7 +11,7 @@ export function getClientCookie(key: string): string | undefined {
   return Cookies.get(key)
 }
 
-export function setClientCookie(key: string, value: any) {
+export function setClientCookie(key: string, value: string) {
   Cookies.set(key,value,{
     expires:7
   })
@@ -37,7 +37,7 @@ async function getUniversalCookie(key: string): Promise<string | undefined> {
   }
 }
 
-async function setUniversalCookie(key: string,value:any) {
+async function setUniversalCookie(key: string,value:string) {
    if (typeof window === 'undefined') {
         //will set it later via client component as we can set cookies from server component
         return
@@ -145,7 +145,7 @@ export async function apiRequest<T>(
     }
   }
 
-  let data=await res.json();
+  const data=await res.json();
   if(tokens){
     data['access_token']=tokens.access_token
     data['refresh_token']=tokens.refresh_token

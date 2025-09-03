@@ -12,7 +12,7 @@ interface Props {
   
 }
 async function layout({ children }: Props) {
-    let user =  await requireAuth()
+    const user =  await requireAuth()
   
   return (
     <SidebarProvider>

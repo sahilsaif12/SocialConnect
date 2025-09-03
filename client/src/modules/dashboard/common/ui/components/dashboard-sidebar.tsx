@@ -11,10 +11,7 @@ import { DashboardUserButton } from "./dashboard-user-button"
 import { useStore } from "@/store/useStore"
 
 
-interface DashboardSidebarProps{
-}
-
-export const DashboardSidebar = ({}:DashboardSidebarProps) => {
+export const DashboardSidebar = () => {
     const {userData:data}=useStore()
     
     

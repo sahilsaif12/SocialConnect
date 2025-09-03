@@ -13,7 +13,6 @@ interface DetailsSaverProps {
 function DetailsSaver({ user }: DetailsSaverProps) {
   const { setUser } = useStore()
   useEffect(() => {
-    console.log("user-----", user);
     
     setUser(user)
     if (user.access_token) {
